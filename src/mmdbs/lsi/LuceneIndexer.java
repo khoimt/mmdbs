@@ -32,7 +32,7 @@ public class LuceneIndexer implements Indexer {
             throw new Exception("data dir is vot validate");
         }
 
-        System.out.println("Start Lucene Indexing:");
+        LSILogger.log("Start Lucene Indexing:");
         IndexWriter writer = new IndexWriter(
                 FSDirectory.open(new File(this._indexDir)),
                 new StandardAnalyzer(Version.LUCENE_30),
@@ -56,7 +56,7 @@ public class LuceneIndexer implements Indexer {
                     }
                 }
             } else {
-                System.out.println("index " + file);
+                LSILogger.log("index " + file);
                 Document doc = new Document();
                 doc.add(new Field("contents", new FileReader(file)));
                 writer.addDocument(doc);
