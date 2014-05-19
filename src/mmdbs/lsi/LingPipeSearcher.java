@@ -6,55 +6,56 @@ import java.util.Arrays;
 
 public class LingPipeSearcher {
 
-    static final double[][] TERM_DOCUMENT_MATRIX
-	= new double[][] {
-	    {1, 0, 0, 1, 0, 0, 0, 0, 0 },
-	    {1, 0, 1, 0, 0, 0, 0, 0, 0 },
-	    {1, 1, 0, 0, 0, 0, 0, 0, 0 },
-	    {0, 1, 1, 0, 1, 0, 0, 0, 0 },
-	    {0, 1, 1, 2, 0, 0, 0, 0, 0 },
-	    {0, 1, 0, 0, 1, 0, 0, 0, 0 },
-	    {0, 1, 0, 0, 1, 0, 0, 0, 0 },
-	    {0, 0, 1, 1, 0, 0, 0, 0, 0 },
-	    {0, 1, 0, 0, 0, 0, 0, 0, 1 },
-	    {0, 0, 0, 0, 0, 1, 1, 1, 0 },
-	    {0, 0, 0, 0, 0, 0, 1, 1, 1 },
-	    {0, 0, 0, 0, 0, 0, 0, 1, 1 }
-    };
+    public LingPipeSearcher() {
+    }
 
-    static final String[] TERMS 
-	= new String[] {
-	"human",
-	"interface",
-	"computer",
-	"user",
-	"system",
-	"response",
-	"time",
-	"EPS",
-	"survey",
-	"trees",
-	"graph",
-	"minors"
-    };
+    public LingPipeSearcher(String query) {
+        this.query = query;
+    }
 
-    static final String[] DOCS
-	= new String[] {
-	"Human machine interface for Lab ABC computer applications",
-	"A survey of user opinion of computer system response time",
-	"The EPS user interface management system",
-	"System and human system engineering testing of EPS",
-	"Relation of user-perceived response time to error measurement",
-	"The generation of random, binary, unordered trees",
-	"The intersection graph of paths in trees",
-	"Graph minors IV: Widths of trees and well-quasi-ordering",
-	"Graph minors: A survey"
-    };
+    public LingPipeSearcher(double[][] termDocArr, String[] termArr, String query) {
+        this.termDocumentArr = termDocArr;
+        this.termArr = termArr;
+        this.query = query;
+    }
+
+    public String query = null;
+
+    public double[][] termDocumentArr
+            = new double[][]{
+                {1, 0, 0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 1, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 1, 0, 0, 0, 0},
+                {0, 1, 1, 2, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0, 1, 1}
+            };
+
+    public String[] termArr
+            = new String[]{
+                "human",
+                "interface",
+                "computer",
+                "user",
+                "system",
+                "response",
+                "time",
+                "EPS",
+                "survey",
+                "trees",
+                "graph",
+                "minors"
+            };
 
     static final int NUM_FACTORS = 2;
 
-
-    public static void main(String[] args) throws Exception {
+    public void run() {
         double featureInit = 0.01;
         double initialLearningRate = 0.005;
         int annealingRate = 1000;
@@ -63,137 +64,135 @@ public class LingPipeSearcher {
         int minEpochs = 10;
         int maxEpochs = 50000;
 
-        System.out.println("  Computing SVD");
-        System.out.println("    maxFactors=" + NUM_FACTORS);
-        System.out.println("    featureInit=" + featureInit);
-        System.out.println("    initialLearningRate=" + initialLearningRate);
-        System.out.println("    annealingRate=" + annealingRate);
-        System.out.println("    regularization" + regularization);
-        System.out.println("    minImprovement=" + minImprovement);
-        System.out.println("    minEpochs=" + minEpochs);
-        System.out.println("    maxEpochs=" + maxEpochs);
-
+//        System.out.println("  Computing SVD");
+//        System.out.println("    maxFactors=" + NUM_FACTORS);
+//        System.out.println("    featureInit=" + featureInit);
+//        System.out.println("    initialLearningRate=" + initialLearningRate);
+//        System.out.println("    annealingRate=" + annealingRate);
+//        System.out.println("    regularization" + regularization);
+//        System.out.println("    minImprovement=" + minImprovement);
+//        System.out.println("    minEpochs=" + minEpochs);
+//        System.out.println("    maxEpochs=" + maxEpochs);
         SvdMatrix matrix
-            = SvdMatrix.svd(TERM_DOCUMENT_MATRIX,
-			    NUM_FACTORS,
-			    featureInit,
-			    initialLearningRate,
-			    annealingRate,
-			    regularization,
-                            null,
-			    minImprovement,
-			    minEpochs,
-			    maxEpochs);
+                = SvdMatrix.svd(this.termDocumentArr,
+                        NUM_FACTORS,
+                        featureInit,
+                        initialLearningRate,
+                        annealingRate,
+                        regularization,
+                        null,
+                        minImprovement,
+                        minEpochs,
+                        maxEpochs);
 
-	double[] scales = matrix.singularValues();
-	double[][] termVectors = matrix.leftSingularVectors();
-	double[][] docVectors = matrix.rightSingularVectors();
+        double[] scales = matrix.singularValues();
+        double[][] termVectors = matrix.leftSingularVectors();
+        double[][] docVectors = matrix.rightSingularVectors();
 
-	System.out.println("\nSCALES");
-	for (int k = 0; k < NUM_FACTORS; ++k)
-	    System.out.printf("%d  %4.2f\n",k,scales[k]);
-	
+        LSILogger.log("Eigenvalues Matrix");
+        for (int k = 0; k < NUM_FACTORS; ++k) {
+            LSILogger.print(String.format("%d  %4.2f\n", k, scales[k]));
+        }
 
-	System.out.println("\nTERM VECTORS");
-	for (int i = 0; i < termVectors.length; ++i) {
-	    System.out.print("(");
-	    for (int k = 0; k < NUM_FACTORS; ++k) {
-		if (k > 0) System.out.print(", ");
-		System.out.printf("% 5.2f",termVectors[i][k]);
-	    }
-	    System.out.print(")  ");
-	    System.out.println(TERMS[i]);
-	}
-	
-	System.out.println("\nDOC VECTORS");
-	for (int j = 0; j < docVectors.length; ++j) {
-	    System.out.print("(");
-	    for (int k = 0; k < NUM_FACTORS; ++k) {
-		if (k > 0) System.out.print(", ");
-		System.out.printf("% 5.2f",docVectors[j][k]);
-	    }
-	    System.out.print(")  ");
-	    System.out.println(DOCS[j]);
-	}
+        LSILogger.log("\nTerm Vectors");
+        for (int i = 0; i < termVectors.length; ++i) {
+            LSILogger.print("(");
+            for (int k = 0; k < NUM_FACTORS; ++k) {
+                if (k > 0) {
+                    LSILogger.print(", ");
+                }
+                LSILogger.print(String.format("% 5.2f", termVectors[i][k]));
+            }
+            LSILogger.log(")  ");
+        }
 
+        LSILogger.log("\nDocument Vectors");
+        for (int j = 0; j < docVectors.length; ++j) {
+            LSILogger.print("(");
+            for (int k = 0; k < NUM_FACTORS; ++k) {
+                if (k > 0) {
+                    LSILogger.print(", ");
+                }
+                LSILogger.print(String.format("% 5.2f", docVectors[j][k]));
+            }
+            LSILogger.log(")  ");
+        }
 
-	for (int m = 0; m < args.length; ++m) {
-	    search(scales,termVectors,docVectors,args[m]);
-	}
+        if (this.query != null) {
+            this.search(scales, termVectors, docVectors, query);
+        }
     }
 
-	
+    public void search(double[] scales,
+            double[][] termVectors,
+            double[][] docVectors,
+            String arg) {
+        String[] terms = arg.split(" |,"); // space or comma separated
 
+        double[] queryVector = new double[NUM_FACTORS];
+        Arrays.fill(queryVector, 0.0);
 
-    static void search(double[] scales,
-		       double[][] termVectors,
-		       double[][] docVectors,
-		       String arg) {
-	String[] terms = arg.split(" |,"); // space or comma separated
-	
-	double[] queryVector = new double[NUM_FACTORS];
-	Arrays.fill(queryVector,0.0);
+        for (String term : terms) {
+            addTermVector(term, termVectors, queryVector);
+        }
 
-	for (String term : terms)
-	    addTermVector(term,termVectors,queryVector);
+        LSILogger.print("\nQuery=" + Arrays.asList(terms));
+        LSILogger.print("Query Vector=(");
+        for (int k = 0; k < queryVector.length; ++k) {
+            if (k > 0) {
+                LSILogger.print(", ");
+            }
+            LSILogger.print(String.format("% 5.2f", queryVector[k]));
+        }
+        LSILogger.log(" )");
 
-	
-	System.out.println("\nQuery=" + Arrays.asList(terms));
-	System.out.print("Query Vector=(");
-	for (int k = 0; k < queryVector.length; ++k) {
-	    if (k > 0) System.out.print(", ");
-	    System.out.printf("% 5.2f",queryVector[k]);
-	}
-	System.out.println(" )");
+        LSILogger.log("\nResult and scores:");
+        for (int j = 0; j < docVectors.length; ++j) {
+            double score = dotProduct(queryVector, docVectors[j], scales);
+            score = cosine(queryVector, docVectors[j], scales);
+            LSILogger.print(String.format("  %d: % 5.2f \n", j, score));
+        }
 
-	System.out.println("\nDOCUMENT SCORES VS. QUERY");
-	for (int j = 0; j < docVectors.length; ++j) {
-	    double score = dotProduct(queryVector,docVectors[j],scales);
-	    // double score = cosine(queryVector,docVectors[j],scales);
-	    System.out.printf("  %d: % 5.2f  %s\n",j,score,DOCS[j]);
-	}
-
-	System.out.println("\nTERM SCORES VS. QUERY");
-	for (int i = 0; i < termVectors.length; ++i) {
-	    double score = dotProduct(queryVector,termVectors[i],scales);
-	    // double score = cosine(queryVector,termVectors[i],scales);
-	    System.out.printf("  %d: % 5.2f  %s\n",i,score,TERMS[i]);
-	}	
+//        System.out.println("\nTERM SCORES VS. QUERY");
+//        for (int i = 0; i < termVectors.length; ++i) {
+//            double score = dotProduct(queryVector, termVectors[i], scales);
+//            score = cosine(queryVector, termVectors[i], scales);
+//            System.out.printf("  %d: % 5.2f  %s\n", i, score, termArr[i]);
+//        }
     }
 
-
-    static void addTermVector(String term, double[][] termVectors, double[] queryVector) {
-	for (int i = 0; i < TERMS.length; ++i) {
-	    if (TERMS[i].equals(term)) {
-		for (int j = 0; j < NUM_FACTORS; ++j) {
-		    queryVector[j] += termVectors[i][j];
-		}
-		return;
-	    }
-	}
+    public void addTermVector(String term, double[][] termVectors, double[] queryVector) {
+        for (int i = 0; i < termArr.length; ++i) {
+            if (termArr[i].equals(term)) {
+                for (int j = 0; j < NUM_FACTORS; ++j) {
+                    queryVector[j] += termVectors[i][j];
+                }
+                return;
+            }
+        }
     }
 
-    static double dotProduct(double[] xs, double[] ys, double[] scales) {
-	double sum = 0.0;
-	for (int k = 0; k < xs.length; ++k)
-	    sum += xs[k] * ys[k] * scales[k];
-	return sum;
+    public static double dotProduct(double[] xs, double[] ys, double[] scales) {
+        double sum = 0.0;
+        for (int k = 0; k < xs.length; ++k) {
+            sum += xs[k] * ys[k] * scales[k];
+        }
+        return sum;
     }
 
-    static double cosine(double[] xs, double[] ys, double[] scales) {
-	double product = 0.0;
-	double xsLengthSquared = 0.0;
-	double ysLengthSquared = 0.0;
-	for (int k = 0; k < xs.length; ++k) {
-	    double sqrtScale = Math.sqrt(scales[k]);
-	    double scaledXs = sqrtScale * xs[k];
-	    double scaledYs = sqrtScale * ys[k];
-	    xsLengthSquared += scaledXs * scaledXs;
-	    ysLengthSquared += scaledYs * scaledYs;
-	    product += scaledXs * scaledYs;
-	}
-	return product / Math.sqrt(xsLengthSquared * ysLengthSquared);
+    public static double cosine(double[] xs, double[] ys, double[] scales) {
+        double product = 0.0;
+        double xsLengthSquared = 0.0;
+        double ysLengthSquared = 0.0;
+        for (int k = 0; k < xs.length; ++k) {
+            double sqrtScale = Math.sqrt(scales[k]);
+            double scaledXs = sqrtScale * xs[k];
+            double scaledYs = sqrtScale * ys[k];
+            xsLengthSquared += scaledXs * scaledXs;
+            ysLengthSquared += scaledYs * scaledYs;
+            product += scaledXs * scaledYs;
+        }
+        return product / Math.sqrt(xsLengthSquared * ysLengthSquared);
     }
-    
 
 }

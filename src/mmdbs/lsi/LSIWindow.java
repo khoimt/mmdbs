@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -50,7 +51,9 @@ public class LSIWindow extends javax.swing.JFrame {
         searchButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(400, 300));
@@ -120,6 +123,7 @@ public class LSIWindow extends javax.swing.JFrame {
         jScrollPane1.setPreferredSize(new java.awt.Dimension(550, 200));
 
         consolePanel.setColumns(20);
+        consolePanel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         consolePanel.setRows(5);
         consolePanel.setMinimumSize(new java.awt.Dimension(20, 30));
         jScrollPane1.setViewportView(consolePanel);
@@ -166,10 +170,28 @@ public class LSIWindow extends javax.swing.JFrame {
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         jMenu1.setText("File");
+
+        jMenuItem2.setText("Exit");
+        jMenuItem2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuItem2MouseClicked(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
         jMenu2.setActionCommand("Help");
+
+        jMenuItem1.setText("Clear console");
+        jMenuItem1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jMenuItem1MousePressed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -217,7 +239,22 @@ public class LSIWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_indexButtonMouseClicked
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
+        String query = this.queryText.getText().trim();
+        if(query.isEmpty()) {
+            LSILogger.log("Please input query");
+            return;
+        }
+        LingPipeSearcher lingPipeSearcher = new LingPipeSearcher(query);
+        lingPipeSearcher.run();
     }//GEN-LAST:event_searchButtonMouseClicked
+
+    private void jMenuItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem2MouseClicked
+//        this.e
+    }//GEN-LAST:event_jMenuItem2MouseClicked
+
+    private void jMenuItem1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem1MousePressed
+        this.consolePanel.setText("");
+    }//GEN-LAST:event_jMenuItem1MousePressed
 
     public JTextArea getConsolePanel() {
         return this.consolePanel;
@@ -263,6 +300,8 @@ public class LSIWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JPanel mainPanel;
     private javax.swing.JTextField queryText;
