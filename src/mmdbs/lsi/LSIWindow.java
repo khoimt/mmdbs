@@ -47,15 +47,15 @@ public class LSIWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         consolePanel = new javax.swing.JTextArea();
         indexButton = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(400, 300));
 
         mainPanel.setMinimumSize(new java.awt.Dimension(400, 300));
-        mainPanel.setPreferredSize(new java.awt.Dimension(600, 400));
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Data directory:");
@@ -67,6 +67,7 @@ public class LSIWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         mainPanel.add(jLabel1, gridBagConstraints);
 
+        dataDirText.setText("./data");
         dataDirText.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 dataDirTextMouseClicked(evt);
@@ -89,6 +90,7 @@ public class LSIWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         mainPanel.add(jLabel2, gridBagConstraints);
 
+        indexDirText.setText("./index");
         indexDirText.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 indexDirTextMouseClicked(evt);
@@ -147,14 +149,21 @@ public class LSIWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         mainPanel.add(indexButton, gridBagConstraints);
 
-        jButton2.setText("Search");
+        searchButton.setText("Search");
+        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchButtonMouseClicked(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        mainPanel.add(jButton2, gridBagConstraints);
+        mainPanel.add(searchButton, gridBagConstraints);
+
+        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -164,19 +173,6 @@ public class LSIWindow extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 32, Short.MAX_VALUE))
-        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -211,14 +207,17 @@ public class LSIWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_indexDirTextMouseClicked
 
     private void indexButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_indexButtonMouseClicked
-        // TODO add your handling code here:
         try {
             LSI.index(dataDirText.getText(), indexDirText.getText());
+            LSI.printTermDocMatrix(indexDirText.getText());
         } catch (Exception ex) {
             LSILogger.log(ex.getMessage());
             ex.printStackTrace();
         }
     }//GEN-LAST:event_indexButtonMouseClicked
+
+    private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
+    }//GEN-LAST:event_searchButtonMouseClicked
 
     public JTextArea getConsolePanel() {
         return this.consolePanel;
@@ -258,7 +257,6 @@ public class LSIWindow extends javax.swing.JFrame {
     private javax.swing.JTextField dataDirText;
     private javax.swing.JButton indexButton;
     private javax.swing.JTextField indexDirText;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -266,7 +264,8 @@ public class LSIWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel mainPanel;
+    protected javax.swing.JPanel mainPanel;
     private javax.swing.JTextField queryText;
+    private javax.swing.JButton searchButton;
     // End of variables declaration//GEN-END:variables
 }

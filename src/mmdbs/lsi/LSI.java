@@ -3,10 +3,13 @@
  */
 package mmdbs.lsi;
 
+import java.io.IOException;
+
 public class LSI {
 
     public static String dataDir = "./data";
     public static String indexDir = "./index";
+    public static IndexReaderInterface idxReader = null;
 
     /**
      * @param args the command line arguments
@@ -45,12 +48,43 @@ public class LSI {
     }
 
     public static void index(String dataDir, String indexDir) throws Exception {
-        if (dataDir.trim().isEmpty() || indexDir.trim().isEmpty()) {
+        if (dataDir.trim().isEmpty()) {
             LSILogger.log("data/index directories are not set");
             return;
         }
 
+        if (indexDir.trim().isEmpty()) {
+            indexDir = LSI.indexDir;
+        }
+        
+        LSI.dataDir = dataDir;
+        LSI.indexDir = indexDir;
+
         Indexer indexer = MMDBSFactory.createIndexer(dataDir, indexDir);
         indexer.index();
+    }
+
+    public static IndexReaderInterface getIndexReader(String indexDir) throws IOException {
+        if (idxReader == null)
+            idxReader = MMDBSFactory.createIndexReader(indexDir);
+        return idxReader;
+    }
+    
+    public static void printTermDocMatrix(String indexDir) throws IOException, Exception {
+        LSI.getIndexReader(indexDir);
+        String termArr[] = idxReader.getTerms();
+        int[][] freqArr = idxReader.getTermDocumentMatrix();
+        
+        LSILogger.log("\nTerm-Document Matrix:");
+        
+        int i = 0;
+        for (String term: termArr) {
+            LSILogger.print(String.format("%13s:", term));
+            for (int j = 0; j < freqArr[i].length; j++) {
+                LSILogger.print(String.format("%3d", freqArr[i][j]));
+            }
+            LSILogger.log("");
+            i++;
+        }
     }
 }
