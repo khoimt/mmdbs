@@ -239,13 +239,20 @@ public class LSIWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_indexButtonMouseClicked
 
     private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
-        String query = this.queryText.getText().trim();
-        if(query.isEmpty()) {
-            LSILogger.log("Please input query");
-            return;
+        try {
+            String query = this.queryText.getText().trim();
+            if(query.isEmpty()) {
+                LSILogger.log("Please input query");
+                return;
+            }
+    //        LingPipeSearcher lingPipeSearcher = new LingPipeSearcher(query);
+            IndexReaderInterface idxReader = LSI.getIndexReader(null);
+            LingPipeSearcher lingPipeSearcher = new LingPipeSearcher(idxReader.getTermDocumentMatrix(), idxReader.getTerms(), query);
+            lingPipeSearcher.run();
+        } catch (Exception ex) {
+            LSILogger.log(ex.getMessage());
+            ex.printStackTrace();
         }
-        LingPipeSearcher lingPipeSearcher = new LingPipeSearcher(query);
-        lingPipeSearcher.run();
     }//GEN-LAST:event_searchButtonMouseClicked
 
     private void jMenuItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem2MouseClicked

@@ -65,6 +65,10 @@ public class LSI {
     }
 
     public static IndexReaderInterface getIndexReader(String indexDir) throws IOException {
+        if (indexDir == null) {
+            indexDir = LSI.indexDir;
+        }
+
         if (idxReader == null)
             idxReader = MMDBSFactory.createIndexReader(indexDir);
         return idxReader;
@@ -73,7 +77,7 @@ public class LSI {
     public static void printTermDocMatrix(String indexDir) throws IOException, Exception {
         LSI.getIndexReader(indexDir);
         String termArr[] = idxReader.getTerms();
-        int[][] freqArr = idxReader.getTermDocumentMatrix();
+        double[][] freqArr = idxReader.getTermDocumentMatrix();
         
         LSILogger.log("\nTerm-Document Matrix:");
         
@@ -81,7 +85,7 @@ public class LSI {
         for (String term: termArr) {
             LSILogger.print(String.format("%13s:", term));
             for (int j = 0; j < freqArr[i].length; j++) {
-                LSILogger.print(String.format("%3d", freqArr[i][j]));
+                LSILogger.print(String.format("%6.2f", freqArr[i][j]));
             }
             LSILogger.log("");
             i++;
